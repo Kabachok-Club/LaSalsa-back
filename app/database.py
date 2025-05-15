@@ -1,7 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
-from contextlib import asynccontextmanager
-from config import DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME
+from app.config import DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME
 
 # 👇 Настройка подключения (проверь путь!)
 DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
@@ -17,7 +16,6 @@ class Base(DeclarativeBase):
     pass
 
 # 👇 Зависимость для FastAPI (yield, а не return!)
-@asynccontextmanager
 async def get_async_session():
     async with async_session_maker() as session:
         yield session
