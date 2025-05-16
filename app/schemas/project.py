@@ -3,12 +3,14 @@ from typing import Optional
 from datetime import datetime
 from enum import Enum
 
+
 # ENUM for Project Status
 class ProjectStatus(str, Enum):
     ACTIVE = "ACTIVE"
     INACTIVE = "INACTIVE"
     COMPLETED = "COMPLETED"
     CANCELLED = "CANCELLED"
+
 
 # ENUM for Project Type
 class ProjectType(str, Enum):
@@ -24,6 +26,7 @@ class ProjectBase(BaseModel):
     status: ProjectStatus = Field(ProjectStatus.INACTIVE, title="Project Status", description="Current status of the project")
     type: ProjectType = Field(ProjectType.LIST, title="Project Type", description="Type of the project")
     deadline: Optional[datetime] = Field(None, title="Deadline", description="Deadline for the project")
+
 
 # This is a Pydantic model for the Project schema used for creating new projects - same as ProjectBase
 class ProjectCreate(ProjectBase):

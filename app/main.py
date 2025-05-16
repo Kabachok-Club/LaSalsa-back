@@ -1,13 +1,11 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-
-app = FastAPI(title="LaSalsa API", version="0.1.0")
-
 from app.database import get_async_session
-from app.crud import create_task
-from app.models import Task
+from app.crud import create_task, get_tasks_by_offset
 from app.schemas import TaskCreate
 
+
+app = FastAPI(title="LaSalsa API", version="0.1.0")
 @app.get("/")
 async def root():
     return {"message": "Welcome to LaSalsa API!"}
@@ -19,3 +17,11 @@ async def create_task_endpoint(task: TaskCreate, db: AsyncSession = Depends(get_
     Create a new task.
     """
     return await create_task(db, task)
+
+
+@app.get("/tasks/")
+async def get_tasks_endpoint(offset: int = 0, limit: int = 100, db: AsyncSession = Depends(get_async_session)):
+    """
+    Get tasks with pagination.
+    """
+    return await get_tasks_by_offset(db, offset, limit)

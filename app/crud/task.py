@@ -1,6 +1,7 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import Task
-from app.schemas import TaskCreate, TaskStatus, ProjectCreate
+from app.schemas import TaskCreate, ProjectCreate
 from app.crud.project import get_project_by_id, get_project_by_name, create_project
 from datetime import datetime
 
@@ -32,3 +33,11 @@ async def create_task(db: AsyncSession, task: TaskCreate) -> Task:
     await db.commit()
     await db.refresh(db_task)
     return db_task
+
+
+async def get_tasks_by_offset(db: AsyncSession, offset: int = 0, limit: int = 100) -> list[Task]:
+    result = await db.execute(
+        select(Task).offset(offset).limit(limit)
+    )
+
+    return result.scalars().all()
