@@ -1,4 +1,4 @@
-version: '0.0.2'
+version: '0.0.3'
 services:
   postgres:
     image: postgres:16.9
@@ -8,6 +8,8 @@ services:
       POSTGRES_DB: postgres
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     
   test-db:
     image: postgres:16.9
@@ -17,3 +19,18 @@ services:
       POSTGRES_DB: test_db
     ports:
       - "5433:5432"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: LaSalsaBackend
+    env_file: .env
+    depends_on:
+      - postgres
+    ports:
+      - "8008:8000"
+
+volumes:
+  pgdata:
+

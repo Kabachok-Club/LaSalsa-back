@@ -3,9 +3,23 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session
 from app.crud import create_task, get_tasks_by_offset
 from app.schemas import TaskCreate
-
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="LaSalsa API", version="0.1.0")
+
+origins = [
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to LaSalsa API!"}
