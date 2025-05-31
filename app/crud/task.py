@@ -41,3 +41,12 @@ async def get_tasks_by_offset(db: AsyncSession, offset: int = 0, limit: int = 10
     )
 
     return result.scalars().all()
+
+async def delete_task(db: AsyncSession, task_id: int) -> Task | None:
+    task = await db.get(Task, task_id)
+    if not task:
+        return None
+
+    await db.delete(task)
+    await db.commit()
+    return task
