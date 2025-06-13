@@ -1,10 +1,6 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import get_async_session
-from app.crud import create_task, get_tasks_by_offset, delete_task
-from app.schemas import TaskCreate
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from app.routers import tasks
 app = FastAPI(title="LaSalsa API", version="0.1.0")
 
 origins = [
@@ -19,30 +15,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(tasks.router)
 
 @app.get("/")
 async def root():
     return {"message": "Welcome to LaSalsa API!"}
 
 
-@app.post("/tasks/")
-async def create_task_endpoint(task: TaskCreate, db: AsyncSession = Depends(get_async_session)):
-    """
-    Create a new task.
-    """
-    return await create_task(db, task)
-
-
-@app.get("/tasks/")
-async def get_tasks_endpoint(offset: int = 0, limit: int = 100, db: AsyncSession = Depends(get_async_session)):
-    """
-    Get tasks with pagination.
-    """
-    return await get_tasks_by_offset(db, offset, limit)
-
-@app.delete("/tasks/")
-async def delete_task_endpoint(task_id: int, db: AsyncSession = Depends(get_async_session)):
-    """
-    Delete a task by ID.
-    """
-    return await delete_task(db, task_id)
