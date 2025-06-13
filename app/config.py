@@ -1,19 +1,19 @@
 import os
 from dotenv import load_dotenv
+
+# Выбор .env файла
+env_file = {
+    "dev": ".env",
+    "test": ".env.test",
+    "qa": ".env.qa"
+}.get(os.getenv("ENV", "dev"), ".env")
+
+# Загрузка переменных окружения из выбранного файла
 load_dotenv()
 
-
-# Load environment variables
+# Получение нужных переменных
 DB_USER = os.getenv("DB_USER")
 DB_PASS = os.getenv("DB_PASS")
 DB_NAME = os.getenv("DB_NAME")
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
-
-
-# Load environment variables
-TEST_DB_USER = os.getenv("TEST_DB_USER")
-TEST_DB_PASS = os.getenv("TEST_DB_PASS")
-TEST_DB_NAME = os.getenv("TEST_DB_NAME")
-TEST_DB_HOST = os.getenv("TEST_DB_HOST")
-TEST_DB_PORT = os.getenv("TEST_DB_PORT")
