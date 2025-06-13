@@ -9,7 +9,7 @@ from app.crud import (
     update_task_status,
     get_task_by_id,
 )
-from app.schemas import TaskCreate, TaskRead
+from app.schemas import TaskCreate, TaskRead, TaskShort
 
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
@@ -25,7 +25,7 @@ async def create_task_endpoint(
     return await create_task(db, task)
 
 
-@router.get("/")
+@router.get("/", response_model=list[TaskShort])
 async def get_tasks_endpoint(
     offset: int = 0, limit: int = 100, db: AsyncSession = Depends(get_async_session)
 ):
