@@ -1,4 +1,4 @@
-version: '0.0.3'
+version: '0.1.0'
 services:
   postgres:
     image: postgres:16.9
@@ -19,13 +19,23 @@ services:
       POSTGRES_DB: test_db
     ports:
       - "5433:5432"
+    
+  dev-db:
+    image: postgres:16.9
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dev_db
+    ports:
+      - "5437:5432"
+
 
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: LaSalsaBackend
-    env_file: .env
+    env_file: .env.qa
     depends_on:
       - postgres
     ports:
