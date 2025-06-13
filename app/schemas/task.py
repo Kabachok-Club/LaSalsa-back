@@ -1,15 +1,7 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 from datetime import datetime
-from enum import Enum
-
-# ENUM for Task Status
-class TaskStatus(str, Enum):
-    TODO = "TODO"
-    IN_PROGRESS = "IN_PROGRESS"
-    BLOCKED = "BLOCKED"
-    DONE = "DONE"
-    CANCELLED = "CANCELLED"
+from app.common import TaskStatus
 
 # This is a Pydantic model for the Task schema
 class TaskBase(BaseModel):
@@ -24,3 +16,10 @@ class TaskBase(BaseModel):
 # This is a Pydantic model for the Task schema used for creating new tasks - same as TaskBase
 class TaskCreate(TaskBase):
     pass
+
+class TaskRead(TaskBase):
+    id: int = Field(..., title="Task ID", description="Unique identifier for the task")
+    created_at: datetime = Field(..., title="Created At", description="Creation date and time of the task")
+
+    model_config = ConfigDict(from_attributes=True)
+        

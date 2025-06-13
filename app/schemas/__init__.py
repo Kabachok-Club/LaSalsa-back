@@ -1,4 +1,4 @@
-from .task import TaskCreate, TaskStatus
+from .task import TaskCreate, TaskRead
 from .project import ProjectCreate, ProjectStatus, ProjectType
 
-__all__ = ["TaskCreate", "TaskStatus", "ProjectCreate", "ProjectStatus", "ProjectType"]
+__all__ = ["TaskCreate", "TaskRead", "ProjectCreate", "ProjectStatus", "ProjectType"]

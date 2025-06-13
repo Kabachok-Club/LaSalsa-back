@@ -3,6 +3,10 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from app.database import Base, get_async_session
 from app.main import app
 
+print("== ROUTES ==")
+for route in app.routes:
+    print(route.path)
+
 @pytest.fixture(scope="function")
 async def client():
     TEST_DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5433/test_db"

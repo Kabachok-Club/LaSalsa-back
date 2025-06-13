@@ -7,7 +7,6 @@ from app.schemas import ProjectCreate
 from datetime import datetime
 
 async def create_project(db: AsyncSession, project: ProjectCreate) -> Project:
-    print(f"Creating project: {project}")
     db_project = Project(
         name=project.name,
         description=project.description,
