@@ -24,6 +24,7 @@ class TaskShort(BaseModel):
     name: str = Field(..., title="Task Name", description="Name of the task")
     status: TaskStatus = Field(..., title="Task Status", description="Current status of the task")
     planned_at: Optional[datetime] = Field(None, title="Planned At", description="Planned date and time for the task")
+    closed_at: Optional[datetime] = Field(None, title="Closed At", description="Closed date and time for the task")
     project_id: Optional[int] = Field(None, title="Project ID", description="ID of the project associated with the task")
 
     model_config = ConfigDict(from_attributes=True)
@@ -35,4 +36,13 @@ class TaskRead(TaskBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-        
+class TaskStatus(BaseModel):
+    id: int = Field(..., title="Status ID", description="Unique identifier for the task status")
+    status: TaskStatus = Field(..., title="Task Status", description="Current status of the task")
+
+    model_config = ConfigDict(from_attributes=True)        
+
+class TaskID(BaseModel):
+    id: int = Field(..., title="Task ID", description="Unique identifier for the task")
+
+    model_config = ConfigDict(from_attributes=True)

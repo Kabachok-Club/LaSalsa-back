@@ -9,7 +9,7 @@ from app.crud import (
     update_task_status,
     get_task_by_id,
 )
-from app.schemas import TaskCreate, TaskRead, TaskShort
+from app.schemas import TaskCreate, TaskRead, TaskShort, TaskStatus, TaskID
 
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
@@ -50,12 +50,12 @@ async def get_task_by_id_endpoint(
 
 @router.delete("/")
 async def delete_task_endpoint(
-    task_id: int, db: AsyncSession = Depends(get_async_session)
+    task_id: TaskID, db: AsyncSession = Depends(get_async_session)
 ):
     """
     Delete a task by ID.
     """
-    return await delete_task(db, task_id)
+    return await delete_task(db, task_id.id)
 
 
 @router.put("/{task_id}/update", response_model=TaskRead)
@@ -71,14 +71,14 @@ async def update_task_endpoint(
     return task
 
 
-@router.patch("/{task_id}/status", response_model=TaskRead)
+@router.patch("/status", response_model=TaskRead)
 async def update_task_status_endpoint(
-    task_id: int, status: str, db: AsyncSession = Depends(get_async_session)
+    task_status: TaskStatus, db: AsyncSession = Depends(get_async_session)
 ):
     """
     Update the status of a task by ID.
     """
-    task = await update_task_status(db, task_id, status)
+    task = await update_task_status(db, task_status.id, task_status.status)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
