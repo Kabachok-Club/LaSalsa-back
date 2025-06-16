@@ -30,3 +30,7 @@ async def get_project_by_name(db: AsyncSession, project_name: str) -> Project | 
     )
 
     return result.scalars().first()
+
+async def get_projects(db: AsyncSession) -> list[Project]:
+    result = await db.execute(select(Project))
+    return result.scalars().all()
