@@ -2,5 +2,7 @@
 
 Бэкэнд для таск-менеджера 
 
-1. Fast-Api
-2. Postgres
+1. Фреймворк - Fast-Api
+2. База - Postgres
+2.1. ORM - SQLalchemy
+2.2. Миграции - Alembic
