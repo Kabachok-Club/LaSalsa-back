@@ -97,3 +97,12 @@ async def update_task_status(
     await db.commit()
     await db.refresh(task)
     return task
+
+
+async def get_tasks_by_project_id(
+    db: AsyncSession, project_id: int, offset: int = 0, limit: int = 100
+) -> list[Task]:
+    result = await db.execute(
+        select(Task).where(Task.project_id == project_id).offset(offset).limit(limit)
+    )
+    return result.scalars().all()

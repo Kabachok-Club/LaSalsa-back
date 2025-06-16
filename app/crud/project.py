@@ -6,6 +6,7 @@ from app.schemas import ProjectCreate
 
 from datetime import datetime
 
+
 async def create_project(db: AsyncSession, project: ProjectCreate) -> Project:
     db_project = Project(
         name=project.name,
@@ -24,9 +25,13 @@ async def create_project(db: AsyncSession, project: ProjectCreate) -> Project:
 async def get_project_by_id(db: AsyncSession, project_id: int) -> Project | None:
     return await db.get(Project, project_id)
 
+
 async def get_project_by_name(db: AsyncSession, project_name: str) -> Project | None:
-    result = await db.execute(
-        select(Project).where(Project.name == project_name)
-    )
+    result = await db.execute(select(Project).where(Project.name == project_name))
 
     return result.scalars().first()
+
+
+async def get_projects(db: AsyncSession) -> list[Project]:
+    result = await db.execute(select(Project))
+    return result.scalars().all()

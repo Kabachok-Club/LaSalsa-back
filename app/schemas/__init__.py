@@ -1,4 +1,10 @@
-from .task import TaskCreate, TaskRead, TaskShort, TaskStatus, TaskID
-from .project import ProjectCreate, ProjectStatus, ProjectType
+import types
 
-__all__ = ["TaskCreate", "TaskRead", "ProjectCreate", "ProjectStatus", "ProjectType", "TaskShort", "TaskStatus", "TaskID"]
+from .task import TaskCreate, TaskRead, TaskShort, TaskStatus, TaskID
+from .project import ProjectCreate, ProjectBase, ProjectRead
+
+__all__ = [
+    name
+    for name, val in globals().items()
+    if isinstance(val, types.FunctionType) and not name.startswith("_")
+]
