@@ -41,7 +41,7 @@ async def get_tasks_endpoint(
         raise HTTPException(status_code=401, detail="Unauthorized")
     
     user_uid = user.get("uid")
-    return await get_tasks_by_offset(db, offset, limit, user_uid)
+    return await get_tasks_by_offset(db, user_uid, offset, limit)
 
 
 @router.get("/{task_id}", response_model=TaskRead)

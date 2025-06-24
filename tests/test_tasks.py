@@ -1,7 +1,6 @@
 import pytest
 from httpx import AsyncClient
 
-
 def create_task_function(client: AsyncClient):
     return client.post(
         "/tasks/",
@@ -55,7 +54,7 @@ async def test_delete_task(client: AsyncClient):
     task_id = response.json()["id"]
 
     # Delete the task
-    delete_response = await client.delete(f"/tasks/?task_id={task_id}")
+    delete_response = await client.request(method="DELETE", url="/tasks/",  json={"id": task_id})
     assert delete_response.status_code == 200
     data = delete_response.json()
     assert data["id"] == task_id

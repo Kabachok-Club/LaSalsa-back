@@ -9,6 +9,10 @@ from app.crud.project import get_project_by_id, get_project_by_name, create_proj
 from datetime import datetime
 
 
+def validate_owner(user_uid: str, task: Task) -> bool:
+    """Check if the task belongs to the user."""
+    return task.owner_uid == user_uid
+
 async def create_task(db: AsyncSession, task: TaskCreate, user_uid: str) -> Task:
     project_id = task.project_id
     project_name = task.project_name
@@ -30,7 +34,7 @@ async def create_task(db: AsyncSession, task: TaskCreate, user_uid: str) -> Task
         status=task.status,
         closed_at=task.closed_at,
         project_id=project.id if project else None,
-        user_id=user_uid,
+        owner_uid=user_uid,
     )
 
     db.add(db_task)
@@ -44,7 +48,7 @@ async def get_tasks_by_offset(
 ) -> list[Task]:
     """Retrieve tasks for a user with pagination."""
     result = await db.execute(
-        select(Task).offset(offset).limit(limit).filter(Task.user_id == user_uid)
+        select(Task).offset(offset).limit(limit)
     )
 
     return result.scalars().all()
@@ -56,7 +60,7 @@ async def get_task_by_id(db: AsyncSession, task_id: int, user_uid: str) -> Task 
     task = await db.get(Task, task_id)
     if not task:
         return None
-    if task.user_id != user_uid:
+    if not validate_owner(user_uid, task):
         return None
     return task
 
@@ -64,6 +68,8 @@ async def get_task_by_id(db: AsyncSession, task_id: int, user_uid: str) -> Task 
 async def delete_task(db: AsyncSession, task_id: int, user_uid: str) -> Task | None:
     task = await db.get(Task, task_id)
     if not task:
+        return None
+    if not validate_owner(user_uid, task):
         return None
 
     await db.delete(task)
@@ -76,6 +82,8 @@ async def update_task(
 ) -> Task | None:
     task = await db.get(Task, task_id)
     if not task:
+        return None
+    if not validate_owner(user_uid, task):
         return None
 
     task.name = task_data.name
@@ -96,7 +104,8 @@ async def update_task_status(
     task = await db.get(Task, task_id)
     if not task:
         return None
-
+    if not validate_owner(user_uid, task):
+        return None
     task.status = status
     if status == TaskStatus.DONE:
         task.closed_at = datetime.now()
@@ -111,6 +120,6 @@ async def get_tasks_by_project_id(
     db: AsyncSession, project_id: int, user_uid: str, offset: int = 0, limit: int = 100
 ) -> list[Task]:
     result = await db.execute(
-        select(Task).where(Task.project_id == project_id).offset(offset).limit(limit)
+        select(Task).where(Task.project_id == project_id).offset(offset).limit(limit).filter(Task.owner_uid == user_uid)
     )
     return result.scalars().all()
