@@ -171,3 +171,5 @@ cython_debug/
 
 # Visual Studio Code
 .vscode/
+
+serviceAccountKey.json

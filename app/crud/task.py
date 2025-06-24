@@ -9,7 +9,7 @@ from app.crud.project import get_project_by_id, get_project_by_name, create_proj
 from datetime import datetime
 
 
-async def create_task(db: AsyncSession, task: TaskCreate) -> Task:
+async def create_task(db: AsyncSession, task: TaskCreate, user_uid: str) -> Task:
     project_id = task.project_id
     project_name = task.project_name
     project = None
@@ -30,6 +30,7 @@ async def create_task(db: AsyncSession, task: TaskCreate) -> Task:
         status=task.status,
         closed_at=task.closed_at,
         project_id=project.id if project else None,
+        user_id=user_uid,
     )
 
     db.add(db_task)
@@ -39,21 +40,21 @@ async def create_task(db: AsyncSession, task: TaskCreate) -> Task:
 
 
 async def get_tasks_by_offset(
-    db: AsyncSession, offset: int = 0, limit: int = 100
+    db: AsyncSession, user_uid: str, offset: int = 0, limit: int = 100
 ) -> list[Task]:
     result = await db.execute(select(Task).offset(offset).limit(limit))
 
     return result.scalars().all()
 
 
-async def get_task_by_id(db: AsyncSession, task_id: int) -> Task | None:
+async def get_task_by_id(db: AsyncSession, task_id: int, user_uid: str) -> Task | None:
     task = await db.get(Task, task_id)
     if not task:
         return None
     return task
 
 
-async def delete_task(db: AsyncSession, task_id: int) -> Task | None:
+async def delete_task(db: AsyncSession, task_id: int, user_uid: str) -> Task | None:
     task = await db.get(Task, task_id)
     if not task:
         return None
@@ -64,7 +65,7 @@ async def delete_task(db: AsyncSession, task_id: int) -> Task | None:
 
 
 async def update_task(
-    db: AsyncSession, task_id: int, task_data: TaskCreate
+    db: AsyncSession, task_id: int, task_data: TaskCreate, user_uid: str
 ) -> Task | None:
     task = await db.get(Task, task_id)
     if not task:
@@ -83,7 +84,7 @@ async def update_task(
 
 
 async def update_task_status(
-    db: AsyncSession, task_id: int, status: TaskStatus
+    db: AsyncSession, task_id: int, status: TaskStatus, user_uid: str
 ) -> Task | None:
     task = await db.get(Task, task_id)
     if not task:
@@ -100,7 +101,7 @@ async def update_task_status(
 
 
 async def get_tasks_by_project_id(
-    db: AsyncSession, project_id: int, offset: int = 0, limit: int = 100
+    db: AsyncSession, project_id: int, user_uid: str, offset: int = 0, limit: int = 100
 ) -> list[Task]:
     result = await db.execute(
         select(Task).where(Task.project_id == project_id).offset(offset).limit(limit)
