@@ -1,6 +1,7 @@
 import pytest
 from httpx import AsyncClient
 
+
 def create_task_function(client: AsyncClient):
     return client.post(
         "/tasks/",
@@ -54,7 +55,9 @@ async def test_delete_task(client: AsyncClient):
     task_id = response.json()["id"]
 
     # Delete the task
-    delete_response = await client.request(method="DELETE", url="/tasks/",  json={"id": task_id})
+    delete_response = await client.request(
+        method="DELETE", url="/tasks/", json={"id": task_id}
+    )
     assert delete_response.status_code == 200
     data = delete_response.json()
     assert data["id"] == task_id
@@ -101,7 +104,9 @@ async def test_update_task_status_done(client: AsyncClient):
     task_id = response.json()["id"]
 
     # Update the task status
-    update_response = await client.patch(f"/tasks/{task_id}/status?status=DONE")
+    update_response = await client.patch(
+        "/tasks/status", json={"id": task_id, "status": "DONE"}
+    )
     assert update_response.status_code == 200
     updated_task = update_response.json()
     assert updated_task["status"] == "DONE"
@@ -123,7 +128,9 @@ async def test_update_task_status_in_progress(client: AsyncClient):
     task_id = response.json()["id"]
 
     # Update the task status
-    update_response = await client.patch(f"/tasks/{task_id}/status?status=IN_PROGRESS")
+    update_response = await client.patch(
+        "/tasks/status", json={"id": task_id, "status": "IN_PROGRESS"}
+    )
     assert update_response.status_code == 200
     updated_task = update_response.json()
     assert updated_task["status"] == "IN_PROGRESS"
