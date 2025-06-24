@@ -13,3 +13,4 @@ class Project(Base):
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
     deadline: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
+    owner_uid: Mapped[str] = mapped_column(String, nullable=False, index=True)

@@ -14,6 +14,7 @@ class Task(Base):
     closed_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
     status: Mapped[str] = mapped_column(String, nullable=False)
     project_id: Mapped[int] = mapped_column(Integer, ForeignKey("projects.id"), nullable=True)
+    owner_uid: Mapped[str] = mapped_column(String, nullable=False, index=True)
 
 
 

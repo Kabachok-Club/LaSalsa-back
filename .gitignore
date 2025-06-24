@@ -171,3 +171,11 @@ cython_debug/
 
 # Visual Studio Code
 .vscode/
+
+# json keys for firebase
+serviceAccountKey.json
+kabachok-test-firebase-adminsdk-fbsvc-8cdd490485.json
+
+# local OS files
+.DS_Store
+Thumbs.db

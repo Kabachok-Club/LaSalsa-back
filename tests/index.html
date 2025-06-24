@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Auth Token Grabber</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        input {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 250px;
+        }
+
+        button {
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        #tokenDisplay {
+            margin-top: 20px;
+            background-color: #f0f0f0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            word-break: break-all;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Firebase Authentication</h1>
+
+    <input type="email" id="email" placeholder="Email">
+    <br>
+    <input type="password" id="password" placeholder="Password">
+    <br>
+    <button id="signInBtn">Sign In</button>
+    <button id="signOutBtn">Sign Out</button>
+
+    <h2>Your Firebase ID Token (Bearer Token)</h2>
+    <div id="tokenDisplay">Token will appear here after sign in.</div>
+
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+
+            apiKey: "AIzaSyANsLdNAgmE-62p7g610uaUxsmOX4Ge66U",
+
+            authDomain: "kabachok-test.firebaseapp.com",
+
+            projectId: "kabachok-test",
+
+            storageBucket: "kabachok-test.firebasestorage.app",
+
+            messagingSenderId: "847047820596",
+
+            appId: "1:847047820596:web:a3c89b20cd5a93f0ccd161",
+
+            measurementId: "G-6F2VKFWHDP"
+
+        };
+
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const signInBtn = document.getElementById('signInBtn');
+        const signOutBtn = document.getElementById('signOutBtn');
+        const tokenDisplay = document.getElementById('tokenDisplay');
+
+        // Sign In
+        signInBtn.addEventListener('click', async () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                const idToken = await user.getIdToken();
+                tokenDisplay.textContent = idToken;
+                console.log("Successfully signed in:", user.email);
+                console.log("ID Token:", idToken);
+            } catch (error) {
+                console.error("Error signing in:", error.message);
+                tokenDisplay.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Sign Out
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+                tokenDisplay.textContent = "Token cleared. Signed out.";
+                console.log("Signed out successfully.");
+            } catch (error) {
+                console.error("Error signing out:", error.message);
+                tokenDisplay.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Listen for auth state changes to automatically update token
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                const idToken = await user.getIdToken();
+                tokenDisplay.textContent = idToken;
+            } else {
+                tokenDisplay.textContent = "Please sign in to get a token.";
+            }
+        });
+
+    </script>
+</body>
+
+</html>

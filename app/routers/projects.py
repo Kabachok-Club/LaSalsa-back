@@ -8,17 +8,18 @@ from app.crud import (
     create_project,
 )
 from app.schemas import ProjectBase, TaskShort, ProjectRead, ProjectCreate
+from app.dependencies import verify_firebase_token
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
 
 @router.get("/", response_model=list[ProjectBase])
-async def get_projects_endpoint(db: AsyncSession = Depends(get_async_session)):
+async def get_projects_endpoint(db: AsyncSession = Depends(get_async_session), user = Depends(verify_firebase_token)):
     """
     Get a list of projects.
     """
-
-    projects = await get_projects(db)
+    user_uid = user.get("uid")
+    projects = await get_projects(db, user_uid)
     if not projects:
         raise HTTPException(status_code=404, detail="No projects found")
 
@@ -27,13 +28,13 @@ async def get_projects_endpoint(db: AsyncSession = Depends(get_async_session)):
 
 @router.get("/{project_id}/tasks", response_model=list[TaskShort])
 async def get_tasks_by_project_endpoint(
-    project_id: int, db: AsyncSession = Depends(get_async_session)
+    project_id: int, db: AsyncSession = Depends(get_async_session), user = Depends(verify_firebase_token)
 ):
     """
     Get tasks by project ID.
     """
-
-    tasks = await get_tasks_by_project_id(db, project_id)
+    user_uid = user.get("uid")
+    tasks = await get_tasks_by_project_id(db, project_id, user_uid)
     if not tasks:
         raise HTTPException(status_code=404, detail="No tasks found for this project")
 
@@ -42,13 +43,13 @@ async def get_tasks_by_project_endpoint(
 
 @router.get("/{project_id}", response_model=ProjectRead)
 async def get_project_by_id_endpoint(
-    project_id: int, db: AsyncSession = Depends(get_async_session)
+    project_id: int, db: AsyncSession = Depends(get_async_session), user = Depends(verify_firebase_token)
 ):
     """
     Get a project by its ID.
     """
-
-    project = await get_project_by_id(db, project_id)
+    user_uid = user.get("uid")
+    project = await get_project_by_id(db, project_id, user_uid)
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
@@ -57,13 +58,13 @@ async def get_project_by_id_endpoint(
 
 @router.post("/", response_model=ProjectBase, status_code=201)
 async def create_project_endpoint(
-    project: ProjectCreate, db: AsyncSession = Depends(get_async_session)
+    project: ProjectCreate, db: AsyncSession = Depends(get_async_session), user = Depends(verify_firebase_token)
 ):
     """
     Create a new project
     """
-
-    new_project = await create_project(db, project)
+    user_uid = user.get("uid")
+    new_project = await create_project(db, project, user_uid)
     if not new_project:
         raise HTTPException(status_code=400, detail="Failed to create project")
 

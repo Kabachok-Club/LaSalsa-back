@@ -21,6 +21,7 @@ async def test_create_project(client: AsyncClient):
     data = response.json()
     assert data["name"] == "Test Project"
     assert data["status"] == "INACTIVE"
+    assert data["owner_uid"] == "test_user_123"
     assert "id" in data
 
 
@@ -91,6 +92,7 @@ async def test_create_project_with_all_fields(client: AsyncClient):
     assert full_data["type"] == "LIST"
     assert full_data["status"] == "INACTIVE"
     assert full_data["deadline"] == "2023-12-31T23:59:59Z"
+    assert full_data["owner_uid"] == "test_user_123"
 
 
 @pytest.mark.asyncio
