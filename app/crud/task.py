@@ -13,6 +13,7 @@ def validate_owner(user_uid: str, task: Task) -> bool:
     """Check if the task belongs to the user."""
     return task.owner_uid == user_uid
 
+
 async def create_task(db: AsyncSession, task: TaskCreate, user_uid: str) -> Task:
     project_id = task.project_id
     project_name = task.project_name
@@ -48,7 +49,7 @@ async def get_tasks_by_offset(
 ) -> list[Task]:
     """Retrieve tasks for a user with pagination."""
     result = await db.execute(
-        select(Task).offset(offset).limit(limit)
+        select(Task).where(Task.owner_uid == user_uid).offset(offset).limit(limit)
     )
 
     return result.scalars().all()
@@ -120,6 +121,9 @@ async def get_tasks_by_project_id(
     db: AsyncSession, project_id: int, user_uid: str, offset: int = 0, limit: int = 100
 ) -> list[Task]:
     result = await db.execute(
-        select(Task).where(Task.project_id == project_id).offset(offset).limit(limit).filter(Task.owner_uid == user_uid)
+        select(Task)
+        .where(Task.project_id == project_id, Task.owner_uid == user_uid)
+        .offset(offset)
+        .limit(limit)
     )
     return result.scalars().all()
